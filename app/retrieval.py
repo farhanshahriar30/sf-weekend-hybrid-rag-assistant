@@ -19,7 +19,8 @@ import re
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Dict, List, Tuple
-from app.retrieval import build_id_map
+
+# from app.retrieval import build_id_map
 from rank_bm25 import BM25Okapi
 from sentence_transformers import SentenceTransformer
 from qdrant_client import QdrantClient
@@ -68,13 +69,22 @@ def load_chunks(chunks_path: Path = CHUNKS_PATH) -> List[Dict]:
     chunks: List[Dict] = []
     with open(chunks_path, "r", encoding="utf-8") as f:
         for line in f:
-            line - line.strip()
+            line = line.strip()
             if not line:
                 continue
             chunks.append(json.loads(line))
     if not chunks:
         raise RuntimeError(f"{chunks_path} exists but contains no chunks")
     return chunks
+
+
+def build_id_map(chunks: List[Dict]) -> Dict[int, Dict]:
+    """
+    Build a fast lookup: chunk_id -> chunk_record
+    Why:
+    - Retrieval returns IDs, and we need to quickly fetch text/source/chunk_index
+    """
+    return {int(c["id"]): c for c in chunks}
 
 
 # PHASE B: BM25 keyword indexing + search
@@ -135,7 +145,7 @@ def bm25_search(
         results.append(
             RetrievalResult(
                 id=int(c["id"]),
-                sources=c["source"],
+                source=c["source"],
                 chunk_index=int(c["chunk_index"]),
                 text=c["text"],
                 score=float(scores[idx]),
@@ -178,12 +188,13 @@ def qdrant_search(
     """
     q_vec = embedder.encode([query])[0].tolist()
 
-    hits = client.search(
+    res = client.query_points(
         collection_name=COLLECTION,
-        query_vector=q_vec,
+        query=q_vec,
         limit=top_k,
         with_payload=True,
     )
+    hits = res.points
 
     results: List[RetrievalResult] = []
     for h in hits:
@@ -288,7 +299,7 @@ def retrieve(
     """
     mode = mode.lower().strip()
     if mode not in {"bm25", "vector", "hybrid"}:
-        raise ValueError(f"mode must be one of: bm25, vectorm hybrid")
+        raise ValueError("mode must be one of: bm25, vector, hybrid")
 
     if mode == "bm25":
         return bm25_search(query, chunks, bm25, top_k=top_k)
@@ -297,7 +308,7 @@ def retrieve(
         return qdrant_search(query, client, embedder, id_map, top_k=top_k)
 
     # Hybrid: get each list, then fuse with RRF
-    bm25_results = bm25_search(query, client, embedder, id_map, top_k=top_k)
+    bm25_results = bm25_search(query, chunks, bm25, top_k=top_k)
     vec_results = qdrant_search(query, client, embedder, id_map, top_k=top_k)
 
     return rrf_fuse([bm25_results, vec_results], k=rrf_k, top_k=top_k)
