@@ -18,8 +18,8 @@ import json
 import re
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple
-
+from typing import Dict, List, Tuple
+from app.retrieval import build_id_map
 from rank_bm25 import BM25Okapi
 from sentence_transformers import SentenceTransformer
 from qdrant_client import QdrantClient
@@ -249,6 +249,7 @@ def rrf_fuse(
     ranked_ids = sorted(
         fused_scores.keys(), key=lambda cid: fused_scores[cid], reverse=True
     )[:top_k]
+
     fused_results: List[RetrievalResult] = []
     for cid in ranked_ids:
         base = best_payload[cid]
@@ -262,3 +263,64 @@ def rrf_fuse(
                 method="hybrid",
             )
         )
+    return fused_results
+
+
+# PHASE E: Unified retrieval entrypoint
+def retrieve(
+    query: str,
+    mode: str,
+    chunks: List[Dict],
+    bm25: BM25Okapi,
+    client: QdrantClient,
+    embedder: SentenceTransformer,
+    id_map: Dict[int, Dict],
+    top_k: int = 8,
+    rrf_k: int = 60,
+) -> List[RetrievalResult]:
+    """
+    One function your app can call.
+
+    mode:
+    - "bm25"   -> keyword search only
+    - "vector" -> semantic search only
+    - "hybrid" -> BM25 + vector combined via RRF
+    """
+    mode = mode.lower().strip()
+    if mode not in {"bm25", "vector", "hybrid"}:
+        raise ValueError(f"mode must be one of: bm25, vectorm hybrid")
+
+    if mode == "bm25":
+        return bm25_search(query, chunks, bm25, top_k=top_k)
+
+    if mode == "vector":
+        return qdrant_search(query, client, embedder, id_map, top_k=top_k)
+
+    # Hybrid: get each list, then fuse with RRF
+    bm25_results = bm25_search(query, client, embedder, id_map, top_k=top_k)
+    vec_results = qdrant_search(query, client, embedder, id_map, top_k=top_k)
+
+    return rrf_fuse([bm25_results, vec_results], k=rrf_k, top_k=top_k)
+
+
+# Convenience loader (build everything once)
+def build_retrievers() -> Tuple[
+    List[Dict], Dict[int, Dict], BM25Okapi, QdrantClient, SentenceTransformer
+]:
+    """
+    Build all retrieval components:
+    - Load chunks
+    - Build id_map
+    - Build BM25 model
+    - Create Qdrant client
+    - Load embedder model
+
+    Why:
+    - Your Streamlit app can call this once and reuse objects for fast queries.
+    """
+    chunks = load_chunks()
+    id_map = build_id_map(chunks)
+    bm25, _ = build_bm25(chunks)
+    client = get_qdrant_client()
+    embedder = get_embedder()
+    return chunks, id_map, bm25, client, embedder
