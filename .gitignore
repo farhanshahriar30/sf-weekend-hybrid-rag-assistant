@@ -144,6 +144,19 @@ ENV/
 env.bak/
 venv.bak/
 
+# Processed data (generated)
+data/processed/
+data/raw/
+
+# OS/editor junk
+.DS_Store
+Thumbs.db
+
+# Model / cache (optional, but keeps repo clean)
+*.pkl
+*.joblib
+*.bin
+
 # Spyder project settings
 .spyderproject
 .spyproject

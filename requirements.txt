@@ -1,0 +1,9 @@
+streamlit
+qdrant-client
+python-dotenv
+pydantic
+rank-bm25
+sentence-transformers
+pypdf
+numpy
+tqdm
