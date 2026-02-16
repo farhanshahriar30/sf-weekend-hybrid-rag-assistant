@@ -55,7 +55,8 @@ def format_context(
     for i, r in enumerate(results, start=1):
         # Cap each chunk so one PDF chunk doesn't eat the whole context budget
         snippet = (r.text or "").strip().replace("\x00", "")
-        snippet = snippet[:per_chunk_chars]
+        snippet = re.sub(r"\s+", " ", snippet)  # collapse weird PDF whitespace/newlines
+        snippet = snippet[:per_chunk_chars]  # then truncate
 
         # Use snippet (NOT full r.text) inside the block
         block = f"[{i}] source={r.source} chunk={r.chunk_index}\n{snippet}\n"
@@ -180,7 +181,7 @@ def answer_question(
     context, citations = format_context(results)
     # D3) Create OpenAI client + choose model
     client, model = get_openai_client()
-    # D4) Create OpenAI client + choose model
+    # D4) Build messages (rules + question + context)
     messages = build_messages(question, context)
 
     # D5) Call the model and extract the answer text
@@ -193,7 +194,8 @@ def answer_question(
     answer_text = (resp.output_text or "").strip()
     # Only show citations the model actually referenced in the answer
     citations_used = filter_citations_used(answer_text, citations)
-
+    if not citations_used:
+        citations_used = citations[:3]
     # D6) Return answer + citations + debug retrieval info
     # Why keep retrieval debug?
     # - Very useful during development
