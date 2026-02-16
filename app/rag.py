@@ -1,0 +1,203 @@
+"""
+rag.py
+
+Goal:
+- Take a user question
+- Retrieve relevant chunks (bm25 / vector / hybrid)
+- Send question + chunks to OpenAI
+- Get a grounded answer with citations like [1], [2] that map to chunks
+"""
+
+from __future__ import annotations
+
+import os
+from typing import Dict, List, Tuple
+from dotenv import load_dotenv
+from openai import OpenAI
+
+from app.retrieval import RetrievalResult, retrieve
+
+
+# PHASE A: Turn retrieved chunks into a "context pack"
+def format_context(
+    results: List[RetrievalResult],
+    max_chars: int = 24000,
+) -> Tuple[str, List[Dict]]:
+    """
+    Convert retrieved chunks into:
+    1) A single context string the LLM can read
+    2) A citations list Streamlit can display nicely
+
+    Context format:
+      [1] source=... chunk=...
+      chunk text...
+
+      ---
+      [2] source=... chunk=...
+      chunk text...
+
+    Why:
+    - The model needs evidence (context) to answer from
+    - Numbering lets the model cite sources easily: [1], [2], ...
+    - max_chars prevents sending an overly long context to the API
+    """
+    blocks: List[str] = []
+    citations: List[Dict] = []
+
+    total_chars = 0
+
+    for i, r in enumerate(results, start=1):
+        # Build one evidence block per retrieved chunk
+        block = f"[{i}] source={r.source} chunk={r.chunk_index}\n{r.text.strip()}\n"
+
+        # Stop adding blocks once we hit our context budget
+        if total_chars + len(block) > max_chars:
+            break
+        blocks.append(block)
+
+        # Structured citation info for UI display
+        citations.append(
+            {
+                "n": i,
+                "source": r.source,
+                "chunk_index": r.chunk_index,
+            }
+        )
+
+        total_chars += len(block)
+
+    context = "\n---\n".join(blocks)
+    return context, citations
+
+
+# PHASE B: Load environment variables + init OpenAI client
+def get_openai_client() -> Tuple[OpenAI, str]:
+    """
+    Read OPENAI_API_KEY and OPENAI_MODEL from .env and return:
+    - an OpenAI client
+    - the model name
+
+    Why:
+    - Keeps secrets out of code (good security + good resume practice)
+    - Lets you switch models by editing .env (no code changes)
+    """
+    load_dotenv()
+    api_key = os.getenv("OPENAI_API_KEY")
+    model = os.getenv("OPENAI_MODEL", "GPT-5.2")
+
+    if not api_key:
+        raise RuntimeError("OPENAI_API_KEY missing. Add it to your .env file.")
+
+    client = OpenAI(api_key=api_key)
+    return client, model
+
+
+# PHASE C: Define prompt rules (anti-hallucination guardrails)
+def build_messages(question: str, context: str) -> List[Dict]:
+    """
+    Construct the messages we send to the LLM.
+
+    Why:
+    - We give strong rules so it stays grounded:
+      - Use ONLY context
+      - Cite chunk numbers
+      - Ask follow-up if info is missing
+    """
+    system = (
+        "You are a San Francisco weekend planning assistant for first-timers.\n"
+        "Use ONLY the provided CONTEXT.\n"
+        "If something is not in the context, say you don't know and ask a follow-up question.\n"
+        "Cite supporting chunks using bracket citations like [1], [2].\n"
+        "Be practical: itinerary bullets, neighborhoods, transit tips, and food suggestions.\n"
+    )
+
+    user = (
+        f"QUESTION:\n{question}\n\n"
+        f"CONTEXT:\n{context}\n\n"
+        "Write an answer grounded in the context. Include citations like [1], [2]."
+    )
+
+    return [
+        {"role": "system", "content": system},
+        {"role": "user", "content": user},
+    ]
+
+
+# PHASE D: Full RAG pipeline (retrieve -> context -> generate)
+def answer_question(
+    question: str,
+    mode: str,
+    chunks: List[Dict],
+    bm25,
+    client_qdrant,
+    embedder,
+    id_map,
+    top_k: int = 8,
+    rrf_k: int = 60,
+) -> Dict:
+    """
+    End-to-end RAG function used by Streamlit.
+
+    Steps:
+    - Retrieve relevant chunks (bm25/vector/hybrid)
+    - Build context pack + citations
+    - Call OpenAI to generate an answer grounded in that context
+
+    Returns:
+      {
+        "answer": str,
+        "citations": [{"n":1,"source":"...","chunk_index":...}, ...],
+        "retrieval": [{"id":..,"method":..,"score":..,"source":..,"chunk_index":..}, ...]
+      }
+    """
+
+    # D1) Retrieve evidence chunks
+    # Why:
+    # - Retrieval narrows the doc space so the model answers from your PDFs
+    # - Hybrid mode (RRF) is usually best overall
+    results = retrieve(
+        query=question,
+        mode=mode,
+        chunks=chunks,
+        bm25=bm25,
+        client=client_qdrant,
+        embedder=embedder,
+        id_map=id_map,
+        top_k=top_k,
+        rrf_k=rrf_k,
+    )
+
+    # D2) Format chunks into an LLM-readable context pack
+    context, citations = format_context(results)
+    # D3) Create OpenAI client + choose model
+    client, model = get_openai_client()
+    # D4) Create OpenAI client + choose model
+    messages = build_messages(question, context)
+
+    # D5) Call the model and extract the answer text
+    resp = client.responses.create(
+        model=model,
+        input=messages,
+        temperature=0.3,  # lower temp = more grounded + consistent
+    )
+
+    answer_text = (resp.output_text or "").strip()
+
+    # D6) Return answer + citations + debug retrieval info
+    # Why keep retrieval debug?
+    # - Very useful during development
+    # - In Streamlit, you can show it under an "Advanced" expander
+    return {
+        "answer": answer_text,
+        "citations": citations,
+        "retrieval": [
+            {
+                "id": r.id,
+                "method": r.method,
+                "score": float(r.score),
+                "source": r.source,
+                "chunk_index": r.chunk_index,
+            }
+            for r in results
+        ],
+    }
