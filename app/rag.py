@@ -16,6 +16,17 @@ from dotenv import load_dotenv
 from openai import OpenAI
 
 from app.retrieval import RetrievalResult, retrieve
+import re
+
+_CITE_RE = re.compile(r"\[(\d+)\]")
+
+
+def filter_citations_used(answer_text: str, citations: List[Dict]) -> List[Dict]:
+    """
+    Keep only citations whose [n] appears in the model's answer text.
+    """
+    used = set(int(n) for n in _CITE_RE.findall(answer_text))
+    return [c for c in citations if c["n"] in used]
 
 
 # PHASE A: Turn retrieved chunks into a "context pack"
@@ -179,6 +190,8 @@ def answer_question(
     )
 
     answer_text = (resp.output_text or "").strip()
+    # Only show citations the model actually referenced in the answer
+    citations_used = filter_citations_used(answer_text, citations)
 
     # D6) Return answer + citations + debug retrieval info
     # Why keep retrieval debug?
@@ -186,7 +199,7 @@ def answer_question(
     # - In Streamlit, you can show it under an "Advanced" expander
     return {
         "answer": answer_text,
-        "citations": citations,
+        "citations": citations_used,
         "retrieval": [
             {
                 "id": r.id,
