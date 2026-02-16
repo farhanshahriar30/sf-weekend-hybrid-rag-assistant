@@ -22,6 +22,7 @@ from app.retrieval import RetrievalResult, retrieve
 def format_context(
     results: List[RetrievalResult],
     max_chars: int = 24000,
+    per_chunk_chars: int = 1200,
 ) -> Tuple[str, List[Dict]]:
     """
     Convert retrieved chunks into:
@@ -35,27 +36,24 @@ def format_context(
       ---
       [2] source=... chunk=...
       chunk text...
-
-    Why:
-    - The model needs evidence (context) to answer from
-    - Numbering lets the model cite sources easily: [1], [2], ...
-    - max_chars prevents sending an overly long context to the API
     """
     blocks: List[str] = []
     citations: List[Dict] = []
-
     total_chars = 0
 
     for i, r in enumerate(results, start=1):
-        # Build one evidence block per retrieved chunk
-        block = f"[{i}] source={r.source} chunk={r.chunk_index}\n{r.text.strip()}\n"
+        # Cap each chunk so one PDF chunk doesn't eat the whole context budget
+        snippet = (r.text or "").strip().replace("\x00", "")
+        snippet = snippet[:per_chunk_chars]
 
-        # Stop adding blocks once we hit our context budget
+        # Use snippet (NOT full r.text) inside the block
+        block = f"[{i}] source={r.source} chunk={r.chunk_index}\n{snippet}\n"
+
+        # Stop once we hit the total context budget
         if total_chars + len(block) > max_chars:
             break
-        blocks.append(block)
 
-        # Structured citation info for UI display
+        blocks.append(block)
         citations.append(
             {
                 "n": i,
@@ -63,7 +61,6 @@ def format_context(
                 "chunk_index": r.chunk_index,
             }
         )
-
         total_chars += len(block)
 
     context = "\n---\n".join(blocks)
@@ -83,7 +80,7 @@ def get_openai_client() -> Tuple[OpenAI, str]:
     """
     load_dotenv()
     api_key = os.getenv("OPENAI_API_KEY")
-    model = os.getenv("OPENAI_MODEL", "GPT-5.2")
+    model = os.getenv("OPENAI_MODEL", "gpt-5.2")
 
     if not api_key:
         raise RuntimeError("OPENAI_API_KEY missing. Add it to your .env file.")
