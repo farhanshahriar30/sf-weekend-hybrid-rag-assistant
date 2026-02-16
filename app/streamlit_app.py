@@ -15,6 +15,14 @@ from app.retrieval import build_retrievers
 from app.rag import answer_question
 
 
+# Streamlit best practice: set config before any other st.* calls
+st.set_page_config(
+    page_title="SF Weekend Hybrid RAG Assistant",
+    page_icon="🌉",
+    layout="wide",
+)
+
+
 # Cache heavy objects so we don't reload models on every interaction
 @st.cache_resource
 def load_system():
@@ -24,10 +32,6 @@ def load_system():
 
 
 def main():
-    st.set_page_config(
-        page_title="SF Weekend Hybrid RAG Assistant", page_icon="🌉", layout="wide"
-    )
-
     st.title("🌉 SF Weekend Hybrid RAG Assistant")
     st.caption(
         "Ask questions and get answers grounded in your SF PDF corpus, with citations."
@@ -41,17 +45,17 @@ def main():
         rrf_k = st.slider(
             "RRF k (only for hybrid)", min_value=20, max_value=100, value=60, step=5
         )
-
         show_debug = st.checkbox("Show debug retrieval panel", value=False)
 
     # Load system
     with st.spinner("Loading retrievers (BM25 + embedder + Qdrant)..."):
         chunks, id_map, bm25, qdrant_client, embedder = load_system()
 
-    # Input box
-    question = st.text_input(
+    # Input box (text_area is nicer for longer prompts)
+    question = st.text_area(
         "Ask something (e.g., “Plan a 2-day first-timer weekend in SF with food + transit tips”)",
         value="Plan a 2-day first-timer weekend in SF with food + transit tips",
+        height=80,
     )
 
     ask = st.button("Ask")
@@ -71,20 +75,27 @@ def main():
             )
 
         st.subheader("Answer")
-        st.markdown(out["answer"])
+        st.markdown(out.get("answer", ""))
 
         st.subheader("Citations")
-        for c in out["citations"]:
-            st.write(f"[{c['n']}] {c['source']} (chunk {c['chunk_index']})")
+        citations = out.get("citations", [])
+        if not citations:
+            st.info("No citations were used in the final answer.")
+        else:
+            for c in citations:
+                title = f"[{c['n']}] {c['source']} (chunk {c['chunk_index']})"
+                with st.expander(title):
+                    st.write(c.get("text", ""))
 
         if show_debug:
             st.subheader("Debug: Retrieval Results")
-            for r in out["retrieval"]:
+            for r in out.get("retrieval", []):
                 st.write(
                     f"**{r['method']}** score={r['score']:.4f} | "
                     f"{r['source']} (chunk {r['chunk_index']})"
                 )
-                st.caption(r["text"][:400] + ("..." if len(r["text"]) > 400 else ""))
+                txt = r.get("text", "")
+                st.caption(txt[:400] + ("..." if len(txt) > 400 else ""))
 
 
 if __name__ == "__main__":

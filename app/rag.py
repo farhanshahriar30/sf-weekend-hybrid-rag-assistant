@@ -70,6 +70,7 @@ def format_context(
                 "n": i,
                 "source": r.source,
                 "chunk_index": r.chunk_index,
+                "text": snippet,
             }
         )
         total_chars += len(block)
