@@ -11,6 +11,26 @@ from sentence_transformers import SentenceTransformer
 from qdrant_client import QdrantClient
 from qdrant_client.http.models import Distance, VectorParams, PointStruct
 
+import re
+
+# Remove:
+# - Private Use Area glyphs (lots of those weird icons live here)
+# - Common PDF “object replacement” chars
+# - Zero-width junk
+_PUA_RE = re.compile(r"[\uE000-\uF8FF]")  # Private Use Area
+_BAD_RE = re.compile(r"[\uFFFC\u200B\u200C\u200D]")  # object replacement + zero-width
+
+
+def clean_pdf_text(text: str) -> str:
+    if not text:
+        return ""
+    text = str(text)
+    text = text.replace("\x00", " ")
+    text = _PUA_RE.sub(" ", text)
+    text = _BAD_RE.sub(" ", text)
+    text = re.sub(r"\s+", " ", text).strip()
+    return text
+
 
 # ---- Config (keep simple for v1) ----
 RAW_DIR = Path("data/raw/sf")
@@ -85,8 +105,6 @@ def chunk_text(text: str, chunk_size: int, overlap: int) -> List[str]:
     Why overlap matters:
     - Prevents cutting an important sentence/idea exactly at a boundary
     """
-    if chunk_size <= overlap:
-        raise ValueError("chunk_size must be > overlap")
     if chunk_size <= overlap:
         raise ValueError("chunk_size must be > overlap")
 
@@ -170,7 +188,7 @@ def main() -> None:
         raw = pdf_to_text(pdf)
 
         # Clean up spacing/line breaks
-        text = normalize_text(raw)
+        text = clean_pdf_text(raw)
 
         # Skip PDFs that effectively contain no text (could be empty or mostly images)
         if len(text.strip()) < 200:

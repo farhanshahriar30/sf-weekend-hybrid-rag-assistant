@@ -15,6 +15,7 @@ from typing import Dict, List, Tuple
 from dotenv import load_dotenv
 from openai import OpenAI
 
+from app.ingest import _BAD_RE, _PUA_RE
 from app.retrieval import RetrievalResult, retrieve
 import re
 
@@ -54,9 +55,12 @@ def format_context(
 
     for i, r in enumerate(results, start=1):
         # Cap each chunk so one PDF chunk doesn't eat the whole context budget
-        snippet = (r.text or "").strip().replace("\x00", "")
-        snippet = re.sub(r"\s+", " ", snippet)  # collapse weird PDF whitespace/newlines
-        snippet = snippet[:per_chunk_chars]  # then truncate
+        snippet = r.text or ""
+        snippet = snippet.replace("\x00", " ")  # nulls -> space
+        snippet = _PUA_RE.sub(" ", snippet)  # kill weird    glyphs
+        snippet = _BAD_RE.sub(" ", snippet)  # kill invisible junk chars
+        snippet = re.sub(r"\s+", " ", snippet).strip()  # collapse whitespace/newlines
+        snippet = snippet[:per_chunk_chars]
 
         # Use snippet (NOT full r.text) inside the block
         block = f"[{i}] source={r.source} chunk={r.chunk_index}\n{snippet}\n"
