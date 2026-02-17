@@ -37,6 +37,10 @@ def main():
         "Ask questions and get answers grounded in your SF PDF corpus, with citations."
     )
 
+    # Conversation memory (chat history)
+    if "history" not in st.session_state:
+        st.session_state.history = []  # [{"role": "user"|"assistant", "content": str}, ...]
+
     # Sidebar controls
     with st.sidebar:
         st.header("Settings")
@@ -61,11 +65,12 @@ def main():
     ask = st.button("Ask")
 
     if ask and question.strip():
-        # Where we’ll stream text into
-        answer_placeholder = st.empty()
-        streamed_text = ""
+        # We'll stream into this placeholder so the answer "types out"
+        st.subheader("Answer")
+        answer_box = st.empty()
 
-        final_out = None  # will hold the final payload (answer + citations + retrieval)
+        running = ""  # accumulated streamed text
+        final_out = None  # will hold final payload (citations + retrieval)
 
         with st.spinner("Retrieving + generating answer (streaming)..."):
             for evt in stream_answer(
@@ -78,39 +83,48 @@ def main():
                 id_map=id_map,
                 top_k=top_k,
                 rrf_k=rrf_k,
+                history=st.session_state.history,
             ):
-                if evt["type"] == "delta":
-                    streamed_text += evt["text"]
-                    # Render live as markdown so it looks like a real chat answer
-                    answer_placeholder.markdown(streamed_text)
+                if evt.get("type") == "delta":
+                    running += evt.get("text", "")
+                    answer_box.markdown(running)
 
-                elif evt["type"] == "final":
+                elif evt.get("type") == "final":
                     final_out = evt
-
-        # Final render (ensures formatting is clean and stable)
-        if final_out:
-            st.subheader("Answer")
-            st.markdown(final_out.get("answer", ""))
-
-            st.subheader("Citations")
-            citations = final_out.get("citations", [])
-            if not citations:
-                st.info("No citations were used in the final answer.")
-            else:
-                for c in citations:
-                    title = f"[{c['n']}] {c['source']} (chunk {c['chunk_index']})"
-                    with st.expander(title):
-                        st.write(c.get("text", ""))
-
-            if show_debug:
-                st.subheader("Debug: Retrieval Results")
-                for r in final_out.get("retrieval", []):
-                    st.write(
-                        f"**{r['method']}** score={r['score']:.4f} | "
-                        f"{r['source']} (chunk {r['chunk_index']})"
+                    # Ensure final text is what we display (in case of any trailing)
+                    answer_box.markdown(final_out.get("answer", running))
+                    st.session_state.history.append(
+                        {"role": "user", "content": question.strip()}
                     )
-                    txt = r.get("text", "")
-                    st.caption(txt[:400] + ("..." if len(txt) > 400 else ""))
+                    st.session_state.history.append(
+                        {
+                            "role": "assistant",
+                            "content": final_out.get("answer", running),
+                        }
+                    )
+                    break
+
+        # Citations
+        st.subheader("Citations")
+        citations = (final_out or {}).get("citations", [])
+        if not citations:
+            st.info("No citations were used in the final answer.")
+        else:
+            for c in citations:
+                title = f"[{c['n']}] {c['source']} (chunk {c['chunk_index']})"
+                with st.expander(title):
+                    st.write(c.get("text", ""))
+
+        # Debug panel
+        if show_debug:
+            st.subheader("Debug: Retrieval Results")
+            for r in (final_out or {}).get("retrieval", []):
+                st.write(
+                    f"**{r['method']}** score={r['score']:.4f} | "
+                    f"{r['source']} (chunk {r['chunk_index']})"
+                )
+                txt = r.get("text", "")
+                st.caption(txt[:400] + ("..." if len(txt) > 400 else ""))
 
 
 if __name__ == "__main__":

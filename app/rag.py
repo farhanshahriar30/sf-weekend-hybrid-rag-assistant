@@ -102,6 +102,7 @@ def stream_answer(
     id_map,
     top_k: int = 8,
     rrf_k: int = 60,
+    history: List[Dict] | None = None,
 ) -> Iterator[Dict]:
     """
     Stream a grounded answer back to the UI.
@@ -129,14 +130,42 @@ def stream_answer(
 
     # 3) OpenAI client + messages
     client, model = get_openai_client()
-    messages = build_messages(question, context)
+    # messages = build_messages(question, context, history=history)
+    # Build ONE prompt string (your SDK's responses.stream expects input=str)
+    system_rules = (
+        "You are a San Francisco weekend planning assistant for first-timers.\n"
+        "Use ONLY the provided CONTEXT.\n"
+        "If something is not in the context, say you don't know and ask a follow-up question.\n"
+        "Cite supporting chunks using bracket citations like [1], [2].\n"
+        "Be practical: itinerary bullets, neighborhoods, transit tips, and food suggestions.\n"
+    )
+
+    parts: List[str] = [system_rules]
+
+    # Include chat history (optional)
+    if history:
+        parts.append("CHAT HISTORY:")
+        for h in history:
+            role = (h.get("role") or "").upper()
+            content = h.get("content") or ""
+            parts.append(f"{role}: {content}")
+        parts.append("")  # spacer
+
+    # Latest question + retrieved context
+    parts.append(f"QUESTION:\n{question}\n")
+    parts.append(f"CONTEXT:\n{context}\n")
+    parts.append(
+        "Write an answer grounded in the context. Include citations like [1], [2]."
+    )
+
+    prompt = "\n".join(parts)
 
     # 4) Stream response (Responses API streaming)
     acc: List[str] = []
 
     with client.responses.stream(
         model=model,
-        input=messages,
+        input=prompt,
         temperature=0.3,
     ) as stream:
         for event in stream:
@@ -187,6 +216,7 @@ def answer_question(
     id_map,
     top_k: int = 8,
     rrf_k: int = 60,
+    history: List[Dict] | None = None,
 ) -> Dict:
     """
     End-to-end RAG function used by Streamlit.
@@ -225,7 +255,7 @@ def answer_question(
     # D3) Create OpenAI client + choose model
     client, model = get_openai_client()
     # D4) Build messages (rules + question + context)
-    messages = build_messages(question, context)
+    messages = build_messages(question, context, history=history)
 
     # D5) Call the model and extract the answer text
     resp = client.responses.create(

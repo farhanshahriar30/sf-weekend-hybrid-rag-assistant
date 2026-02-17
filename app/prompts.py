@@ -11,7 +11,9 @@ from __future__ import annotations
 from typing import Dict, List
 
 
-def build_messages(question: str, context: str) -> List[Dict]:
+def build_messages(
+    question: str, context: str, history: List[Dict] | None = None
+) -> List[Dict]:
     """
     Construct the messages we send to the LLM.
 
@@ -35,7 +37,18 @@ def build_messages(question: str, context: str) -> List[Dict]:
         "Write an answer grounded in the context. Include citations like [1], [2]."
     )
 
-    return [
-        {"role": "system", "content": system},
-        {"role": "user", "content": user},
-    ]
+    messages = [{"role": "system", "content": system}]
+
+    # If we have chat history, insert it after the system message
+    if history:
+        # keep only last N messages to avoid blowing context window
+        last = history[-12:]
+
+        # only allow valid roles + non-empty content
+        cleaned = [
+            {"role": m.get("role"), "content": m.get("content", "")}
+            for m in last
+            if m.get("role") in {"user", "assistant"}
+            and (m.get("content") or "").strip()
+        ]
+        messages.extend(cleaned)
