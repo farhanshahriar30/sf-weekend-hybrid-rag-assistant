@@ -18,6 +18,8 @@ from openai import OpenAI
 from app.ingest import _BAD_RE, _PUA_RE
 from app.retrieval import RetrievalResult, retrieve
 import re
+from app.prompts import build_messages
+
 
 _CITE_RE = re.compile(r"\[(\d+)\]")
 
@@ -104,37 +106,6 @@ def get_openai_client() -> Tuple[OpenAI, str]:
 
     client = OpenAI(api_key=api_key)
     return client, model
-
-
-# PHASE C: Define prompt rules (anti-hallucination guardrails)
-def build_messages(question: str, context: str) -> List[Dict]:
-    """
-    Construct the messages we send to the LLM.
-
-    Why:
-    - We give strong rules so it stays grounded:
-      - Use ONLY context
-      - Cite chunk numbers
-      - Ask follow-up if info is missing
-    """
-    system = (
-        "You are a San Francisco weekend planning assistant for first-timers.\n"
-        "Use ONLY the provided CONTEXT.\n"
-        "If something is not in the context, say you don't know and ask a follow-up question.\n"
-        "Cite supporting chunks using bracket citations like [1], [2].\n"
-        "Be practical: itinerary bullets, neighborhoods, transit tips, and food suggestions.\n"
-    )
-
-    user = (
-        f"QUESTION:\n{question}\n\n"
-        f"CONTEXT:\n{context}\n\n"
-        "Write an answer grounded in the context. Include citations like [1], [2]."
-    )
-
-    return [
-        {"role": "system", "content": system},
-        {"role": "user", "content": user},
-    ]
 
 
 # PHASE D: Full RAG pipeline (retrieve -> context -> generate)
