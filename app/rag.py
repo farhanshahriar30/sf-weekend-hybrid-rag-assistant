@@ -15,21 +15,9 @@ from typing import Dict, List, Tuple
 from dotenv import load_dotenv
 from openai import OpenAI
 
-from app.ingest import _BAD_RE, _PUA_RE
 from app.retrieval import RetrievalResult, retrieve
-import re
 from app.prompts import build_messages
-
-
-_CITE_RE = re.compile(r"\[(\d+)\]")
-
-
-def filter_citations_used(answer_text: str, citations: List[Dict]) -> List[Dict]:
-    """
-    Keep only citations whose [n] appears in the model's answer text.
-    """
-    used = set(int(n) for n in _CITE_RE.findall(answer_text))
-    return [c for c in citations if c["n"] in used]
+from app.utils import clean_snippet, filter_citations_used
 
 
 # PHASE A: Turn retrieved chunks into a "context pack"
@@ -56,13 +44,8 @@ def format_context(
     total_chars = 0
 
     for i, r in enumerate(results, start=1):
-        # Cap each chunk so one PDF chunk doesn't eat the whole context budget
-        snippet = r.text or ""
-        snippet = snippet.replace("\x00", " ")  # nulls -> space
-        snippet = _PUA_RE.sub(" ", snippet)  # kill weird    glyphs
-        snippet = _BAD_RE.sub(" ", snippet)  # kill invisible junk chars
-        snippet = re.sub(r"\s+", " ", snippet).strip()  # collapse whitespace/newlines
-        snippet = snippet[:per_chunk_chars]
+        # Clean + normalize + truncate each chunk
+        snippet = clean_snippet(r.text, per_chunk_chars)
 
         # Use snippet (NOT full r.text) inside the block
         block = f"[{i}] source={r.source} chunk={r.chunk_index}\n{snippet}\n"
