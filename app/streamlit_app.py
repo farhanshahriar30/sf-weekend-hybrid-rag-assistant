@@ -41,6 +41,10 @@ def main():
     if "history" not in st.session_state:
         st.session_state.history = []  # [{"role": "user"|"assistant", "content": str}, ...]
 
+    for m in st.session_state.history:
+        with st.chat_message(m["role"]):
+            st.markdown(m["content"])
+
     # Sidebar controls
     with st.sidebar:
         st.header("Settings")
@@ -66,8 +70,11 @@ def main():
 
     if ask and question.strip():
         # We'll stream into this placeholder so the answer "types out"
-        st.subheader("Answer")
-        answer_box = st.empty()
+        with st.chat_message("user"):
+            st.markdown(question.strip())
+
+        with st.chat_message("assistant"):
+            answer_box = st.empty()
 
         running = ""  # accumulated streamed text
         final_out = None  # will hold final payload (citations + retrieval)
