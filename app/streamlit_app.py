@@ -22,6 +22,88 @@ st.set_page_config(
     layout="wide",
 )
 
+st.markdown(
+    """
+    <style>
+    /* ---------- Neon Purple Background ---------- */
+    .stApp {
+        background:
+          radial-gradient(900px 500px at 20% 0%, rgba(168,85,247,0.35), transparent 55%),
+          radial-gradient(900px 500px at 80% 10%, rgba(59,130,246,0.22), transparent 55%),
+          radial-gradient(1100px 650px at 60% 90%, rgba(236,72,153,0.18), transparent 60%),
+          linear-gradient(180deg, #070816 0%, #050514 100%) !important;
+        color: #F3F4FF !important;
+    }
+
+    /* ---------- FORCE readable text everywhere ---------- */
+    h1, h2, h3, h4, h5, h6,
+    p, span, label, div, small {
+        color: #F3F4FF !important;
+    }
+
+    /* Streamlit caption text */
+    .stCaption, .stMarkdown, .stText {
+        color: rgba(243,244,255,0.85) !important;
+    }
+
+    /* ---------- Sidebar polish ---------- */
+    section[data-testid="stSidebar"] {
+        background: rgba(12,14,35,0.92) !important;
+        border-right: 1px solid rgba(168,85,247,0.25);
+        backdrop-filter: blur(10px);
+    }
+
+    /* sidebar labels */
+    section[data-testid="stSidebar"] * {
+        color: rgba(243,244,255,0.92) !important;
+    }
+
+    /* ---------- Chat bubbles ---------- */
+    div[data-testid="stChatMessage"][aria-label="assistant"]{
+        background: rgba(12,14,35,0.75) !important;
+        border: 1px solid rgba(59,130,246,0.22);
+        box-shadow: 0 0 18px rgba(59,130,246,0.10);
+        border-radius: 16px;
+        padding: 8px 12px;
+    }
+
+    div[data-testid="stChatMessage"][aria-label="user"]{
+        background: rgba(168,85,247,0.14) !important;
+        border: 1px solid rgba(168,85,247,0.35);
+        box-shadow: 0 0 18px rgba(168,85,247,0.12);
+        border-radius: 16px;
+        padding: 8px 12px;
+    }
+
+    /* ---------- Chat input (lighter, neon edge) ---------- */
+    div[data-testid="stChatInput"] {
+        background: rgba(243,244,255,0.08) !important;
+        border: 1px solid rgba(168,85,247,0.35) !important;
+        box-shadow: 0 0 22px rgba(168,85,247,0.18);
+        border-radius: 16px !important;
+        padding: 8px !important;
+        backdrop-filter: blur(12px);
+    }
+
+    div[data-testid="stChatInput"] textarea {
+        background: rgba(243,244,255,0.10) !important;
+        color: #F3F4FF !important;
+        border-radius: 14px !important;
+        border: 1px solid rgba(59,130,246,0.28) !important;
+    }
+
+    div[data-testid="stChatInput"] textarea::placeholder {
+        color: rgba(243,244,255,0.65) !important;
+    }
+
+    /* ---------- Links ---------- */
+    a { color: #60A5FA !important; }
+
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
+
 
 # Cache heavy objects so we don't reload models on every interaction
 @st.cache_resource
@@ -41,9 +123,10 @@ def main():
     if "history" not in st.session_state:
         st.session_state.history = []  # [{"role": "user"|"assistant", "content": str}, ...]
 
-    for m in st.session_state.history:
-        with st.chat_message(m["role"]):
-            st.markdown(m["content"])
+    if "last_citations" not in st.session_state:
+        st.session_state.last_citations = []
+    if "last_retrieval" not in st.session_state:
+        st.session_state.last_retrieval = []
 
     # Sidebar controls
     with st.sidebar:
@@ -59,61 +142,73 @@ def main():
     with st.spinner("Loading retrievers (BM25 + embedder + Qdrant)..."):
         chunks, id_map, bm25, qdrant_client, embedder = load_system()
 
-    # Input box (text_area is nicer for longer prompts)
-    question = st.text_area(
+    left, right = st.columns([3, 1], gap="large")
+
+    question = st.chat_input(
         "Ask something (e.g., “Plan a 2-day first-timer weekend in SF with food + transit tips”)",
-        value="Plan a 2-day first-timer weekend in SF with food + transit tips",
-        height=80,
+        # value="Plan a 2-day first-timer weekend in SF with food + transit tips",
+        # height=80,
     )
 
-    ask = st.button("Ask")
+    with left:
+        for m in st.session_state.history:
+            with st.chat_message(m["role"]):
+                st.markdown(m["content"])
 
-    if ask and question.strip():
-        # We'll stream into this placeholder so the answer "types out"
-        with st.chat_message("user"):
-            st.markdown(question.strip())
+        if question and question.strip():
+            # show the user's message
+            with st.chat_message("user"):
+                st.markdown(question.strip())
 
-        with st.chat_message("assistant"):
-            answer_box = st.empty()
+            # stream the assistant reply inside the assistant bubble
+            with st.chat_message("assistant"):
+                answer_box = st.empty()
+                running = ""
+                final_out = None
 
-        running = ""  # accumulated streamed text
-        final_out = None  # will hold final payload (citations + retrieval)
+                with st.spinner("Retrieving + generating answer (streaming)..."):
+                    for evt in stream_answer(
+                        question=question.strip(),
+                        mode=mode,
+                        chunks=chunks,
+                        bm25=bm25,
+                        client_qdrant=qdrant_client,
+                        embedder=embedder,
+                        id_map=id_map,
+                        top_k=top_k,
+                        rrf_k=rrf_k,
+                        history=st.session_state.history,
+                    ):
+                        if evt.get("type") == "delta":
+                            running += evt.get("text", "")
+                            answer_box.markdown(running)
 
-        with st.spinner("Retrieving + generating answer (streaming)..."):
-            for evt in stream_answer(
-                question=question.strip(),
-                mode=mode,
-                chunks=chunks,
-                bm25=bm25,
-                client_qdrant=qdrant_client,
-                embedder=embedder,
-                id_map=id_map,
-                top_k=top_k,
-                rrf_k=rrf_k,
-                history=st.session_state.history,
-            ):
-                if evt.get("type") == "delta":
-                    running += evt.get("text", "")
-                    answer_box.markdown(running)
+                        elif evt.get("type") == "final":
+                            final_out = evt
+                            answer_box.markdown(final_out.get("answer", running))
+                            st.session_state.last_citations = final_out.get(
+                                "citations", []
+                            )
+                            st.session_state.last_retrieval = final_out.get(
+                                "retrieval", []
+                            )
+                            break
 
-                elif evt.get("type") == "final":
-                    final_out = evt
-                    # Ensure final text is what we display (in case of any trailing)
-                    answer_box.markdown(final_out.get("answer", running))
-                    st.session_state.history.append(
-                        {"role": "user", "content": question.strip()}
-                    )
-                    st.session_state.history.append(
-                        {
-                            "role": "assistant",
-                            "content": final_out.get("answer", running),
-                        }
-                    )
-                    break
+            # only after assistant finishes: update history
+            st.session_state.history.append(
+                {"role": "user", "content": question.strip()}
+            )
+            st.session_state.history.append(
+                {
+                    "role": "assistant",
+                    "content": (final_out or {}).get("answer", running),
+                }
+            )
 
+    with right:
         # Citations
         st.subheader("Citations")
-        citations = (final_out or {}).get("citations", [])
+        citations = st.session_state.last_citations
         if not citations:
             st.info("No citations were used in the final answer.")
         else:
@@ -125,7 +220,7 @@ def main():
         # Debug panel
         if show_debug:
             st.subheader("Debug: Retrieval Results")
-            for r in (final_out or {}).get("retrieval", []):
+            for r in st.session_state.last_retrieval:
                 st.write(
                     f"**{r['method']}** score={r['score']:.4f} | "
                     f"{r['source']} (chunk {r['chunk_index']})"
