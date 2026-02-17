@@ -11,7 +11,7 @@ Goal:
 from __future__ import annotations
 
 import os
-from typing import Dict, List, Tuple
+from typing import Dict, List, Tuple, Iterator
 from dotenv import load_dotenv
 from openai import OpenAI
 
@@ -89,6 +89,44 @@ def get_openai_client() -> Tuple[OpenAI, str]:
 
     client = OpenAI(api_key=api_key)
     return client, model
+
+
+def stream_answer(
+    question: str,
+    mode: str,
+    chunks: List[Dict],
+    bm25,
+    client_qdrant,
+    embedder,
+    id_map,
+    top_k: int = 8,
+    rrf_k: int = 60,
+) -> Iterator[Dict]:
+    """
+    Stream a grounded answer back to the UI.
+
+    Yields dict events:
+      {"type": "delta", "text": "..."}         # partial text chunks
+      {"type": "final", "answer": str, "citations": [...], "retrieval": [...]}
+    """
+    # Retrieve evidence (same as non-streaming)
+    results = retrieve(
+        query=question,
+        mode=mode,
+        chunks=chunks,
+        bm25=bm25,
+        client=client_qdrant,
+        embedder=embedder,
+        id_map=id_map,
+        top_k=top_k,
+        rrf_k=rrf_k,
+    )
+    # Build context pack
+    context, citations = format_context(results)
+
+    # OpenAI client + messages
+    client, model = get_openai_client()
+    messages = build_messages(question, context)
 
 
 # PHASE D: Full RAG pipeline (retrieve -> context -> generate)
