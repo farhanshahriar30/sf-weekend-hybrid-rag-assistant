@@ -1,0 +1,74 @@
+/*  Neon Purple Background 
+.stApp {
+  background:
+    radial-gradient(900px 500px at 20% 0%, rgba(168,85,247,0.35), transparent 55%),
+    radial-gradient(900px 500px at 80% 10%, rgba(59,130,246,0.22), transparent 55%),
+    radial-gradient(1100px 650px at 60% 90%, rgba(236,72,153,0.18), transparent 60%),
+    linear-gradient(180deg, #070816 0%, #050514 100%) !important;
+  color: #F3F4FF !important;
+}
+
+/* ---------- FORCE readable text everywhere ---------- */
+h1, h2, h3, h4, h5, h6,
+p, span, label, div, small {
+  color: #F3F4FF !important;
+}
+
+/* Streamlit caption text */
+.stCaption, .stMarkdown, .stText {
+  color: rgba(243,244,255,0.85) !important;
+}
+
+/* ---------- Sidebar polish ---------- */
+section[data-testid="stSidebar"] {
+  background: rgba(12,14,35,0.92) !important;
+  border-right: 1px solid rgba(168,85,247,0.25);
+  backdrop-filter: blur(10px);
+}
+
+/* sidebar labels */
+section[data-testid="stSidebar"] * {
+  color: rgba(243,244,255,0.92) !important;
+}
+
+/* ---------- Chat bubbles ---------- */
+div[data-testid="stChatMessage"][aria-label="assistant"] {
+  background: rgba(12,14,35,0.75) !important;
+  border: 1px solid rgba(59,130,246,0.22);
+  box-shadow: 0 0 18px rgba(59,130,246,0.10);
+  border-radius: 16px;
+  padding: 8px 12px;
+}
+
+div[data-testid="stChatMessage"][aria-label="user"] {
+  background: rgba(168,85,247,0.14) !important;
+  border: 1px solid rgba(168,85,247,0.35);
+  box-shadow: 0 0 18px rgba(168,85,247,0.12);
+  border-radius: 16px;
+  padding: 8px 12px;
+}
+
+/* ---------- Chat input (lighter, neon edge) ---------- */
+div[data-testid="stChatInput"] {
+  background: rgba(243,244,255,0.08) !important;
+  border: 1px solid rgba(168,85,247,0.35) !important;
+  box-shadow: 0 0 22px rgba(168,85,247,0.18);
+  border-radius: 16px !important;
+  padding: 8px !important;
+  backdrop-filter: blur(12px);
+}
+
+div[data-testid="stChatInput"] textarea {
+  background: rgba(243,244,255,0.10) !important;
+  color: #F3F4FF !important;
+  border-radius: 14px !important;
+  border: 1px solid rgba(59,130,246,0.28) !important;
+  padding: 12px 14px !important;
+}
+
+div[data-testid="stChatInput"] textarea::placeholder {
+  color: rgba(243,244,255,0.65) !important;
+}
+
+/* ---------- Links ---------- */
+a { color: #60A5FA !important; }
