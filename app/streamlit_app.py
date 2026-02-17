@@ -90,6 +90,7 @@ st.markdown(
         color: #F3F4FF !important;
         border-radius: 14px !important;
         border: 1px solid rgba(59,130,246,0.28) !important;
+        padding: 12px 14px !important;
     }
 
     div[data-testid="stChatInput"] textarea::placeholder {
