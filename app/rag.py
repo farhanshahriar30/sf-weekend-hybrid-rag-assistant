@@ -91,6 +91,7 @@ def get_openai_client() -> Tuple[OpenAI, str]:
     return client, model
 
 
+# PHASE C: Full RAG pipeline with streaming response support
 def stream_answer(
     question: str,
     mode: str,
@@ -109,7 +110,8 @@ def stream_answer(
       {"type": "delta", "text": "..."}         # partial text chunks
       {"type": "final", "answer": str, "citations": [...], "retrieval": [...]}
     """
-    # Retrieve evidence (same as non-streaming)
+
+    # 1) Retrieve evidence (same as non-streaming)
     results = retrieve(
         query=question,
         mode=mode,
@@ -121,12 +123,57 @@ def stream_answer(
         top_k=top_k,
         rrf_k=rrf_k,
     )
-    # Build context pack
+
+    # 2) Build context pack
     context, citations = format_context(results)
 
-    # OpenAI client + messages
+    # 3) OpenAI client + messages
     client, model = get_openai_client()
     messages = build_messages(question, context)
+
+    # 4) Stream response (Responses API streaming)
+    acc: List[str] = []
+
+    with client.responses.stream(
+        model=model,
+        input=messages,
+        temperature=0.3,
+    ) as stream:
+        for event in stream:
+            etype = getattr(event, "type", None)
+
+            # Text deltas arrive as "response.output_text.delta"
+            if etype == "response.output_text.delta":
+                delta = getattr(event, "delta", "") or ""
+                if delta:
+                    acc.append(delta)
+                    yield {"type": "delta", "text": delta}
+
+        # Once the stream ends, get the final assembled response object
+        final = stream.get_final_response()
+
+    answer_text = (final.output_text or "").strip()
+
+    # 5) Keep only citations actually referenced in the final answer
+    citations_used = filter_citations_used(answer_text, citations)
+
+    # 6) Emit final payload (UI uses this to render citations + debug panel)
+    yield {
+        "type": "final",
+        "answer": answer_text,
+        "citations": citations_used,
+        "retrieval": [
+            {
+                "id": r.id,
+                "method": r.method,
+                "score": float(r.score),
+                "source": r.source,
+                "chunk_index": r.chunk_index,
+                "text": (r.text or "")[:400],  # 400 is nicer for debug than 200
+            }
+            for r in results
+        ],
+    }
 
 
 # PHASE D: Full RAG pipeline (retrieve -> context -> generate)

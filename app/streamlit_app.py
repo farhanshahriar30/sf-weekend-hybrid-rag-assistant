@@ -12,7 +12,7 @@ User flow:
 import streamlit as st
 
 from app.retrieval import build_retrievers
-from app.rag import answer_question
+from app.rag import answer_question, stream_answer
 
 
 # Streamlit best practice: set config before any other st.* calls
@@ -61,8 +61,14 @@ def main():
     ask = st.button("Ask")
 
     if ask and question.strip():
-        with st.spinner("Retrieving + generating answer..."):
-            out = answer_question(
+        # Where we’ll stream text into
+        answer_placeholder = st.empty()
+        streamed_text = ""
+
+        final_out = None  # will hold the final payload (answer + citations + retrieval)
+
+        with st.spinner("Retrieving + generating answer (streaming)..."):
+            for evt in stream_answer(
                 question=question.strip(),
                 mode=mode,
                 chunks=chunks,
@@ -72,30 +78,39 @@ def main():
                 id_map=id_map,
                 top_k=top_k,
                 rrf_k=rrf_k,
-            )
+            ):
+                if evt["type"] == "delta":
+                    streamed_text += evt["text"]
+                    # Render live as markdown so it looks like a real chat answer
+                    answer_placeholder.markdown(streamed_text)
 
-        st.subheader("Answer")
-        st.markdown(out.get("answer", ""))
+                elif evt["type"] == "final":
+                    final_out = evt
 
-        st.subheader("Citations")
-        citations = out.get("citations", [])
-        if not citations:
-            st.info("No citations were used in the final answer.")
-        else:
-            for c in citations:
-                title = f"[{c['n']}] {c['source']} (chunk {c['chunk_index']})"
-                with st.expander(title):
-                    st.write(c.get("text", ""))
+        # Final render (ensures formatting is clean and stable)
+        if final_out:
+            st.subheader("Answer")
+            st.markdown(final_out.get("answer", ""))
 
-        if show_debug:
-            st.subheader("Debug: Retrieval Results")
-            for r in out.get("retrieval", []):
-                st.write(
-                    f"**{r['method']}** score={r['score']:.4f} | "
-                    f"{r['source']} (chunk {r['chunk_index']})"
-                )
-                txt = r.get("text", "")
-                st.caption(txt[:400] + ("..." if len(txt) > 400 else ""))
+            st.subheader("Citations")
+            citations = final_out.get("citations", [])
+            if not citations:
+                st.info("No citations were used in the final answer.")
+            else:
+                for c in citations:
+                    title = f"[{c['n']}] {c['source']} (chunk {c['chunk_index']})"
+                    with st.expander(title):
+                        st.write(c.get("text", ""))
+
+            if show_debug:
+                st.subheader("Debug: Retrieval Results")
+                for r in final_out.get("retrieval", []):
+                    st.write(
+                        f"**{r['method']}** score={r['score']:.4f} | "
+                        f"{r['source']} (chunk {r['chunk_index']})"
+                    )
+                    txt = r.get("text", "")
+                    st.caption(txt[:400] + ("..." if len(txt) > 400 else ""))
 
 
 if __name__ == "__main__":
