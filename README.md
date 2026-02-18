@@ -202,6 +202,13 @@ If you deploy using your OpenAI API key:
    - Any user interacting with the deployed app will use your key
    - Your OpenAI account is billed for their token usage
 
+## 🧩 Grounding (anti-hallucination behavior)
+
+The prompt forces the model to:
+   - use only provided context
+   - cite chunks used
+   - if evidence is missing, explicitly say “I don’t know” and ask a follow-up
+
 ## 🧰 Tech stack
 
 - **Streamlit**: UI + chat experience  
