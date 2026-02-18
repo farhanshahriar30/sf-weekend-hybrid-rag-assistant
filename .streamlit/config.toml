@@ -1,7 +1,7 @@
 [theme]
-base = "dark"
-primaryColor = "#A855F7"              # neon purple
-backgroundColor = "#070816"           # deep background
-secondaryBackgroundColor = "#0C0E23"  # sidebar/cards base
-textColor = "#F3F4FF"                 # readable text
+base = "light"
+primaryColor = "#FB7185"
+backgroundColor = "#FBF7FF"
+secondaryBackgroundColor = "#FFFFFF"
+textColor = "#160B2A"
 font = "sans serif"
