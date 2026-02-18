@@ -1,0 +1,293 @@
+{
+  "summary": {
+    "n_questions": 6,
+    "top_k": 15,
+    "rrf_k": 60,
+    "total_time_s": 60.903,
+    "citation_coverage": 1.0,
+    "avg_citations_used": 5.0,
+    "empty_answer_rate": 0.0,
+    "avg_latency_s": 10.15,
+    "avg_unique_sources_used": 3.5,
+    "avg_retrieval_unique_sources": 8.667,
+    "refusal_rate": 0.167
+  },
+  "rows": [
+    {
+      "id": "itinerary_first_timer",
+      "mode": "hybrid",
+      "question": "Plan a 2-day first-timer weekend in SF with food + transit tips",
+      "latency_s": 21.807,
+      "answer_len": 4776,
+      "answer_preview": "## 2-day first-timer weekend in San Francisco (with food + transit tips)\n\n### Before you start: simple transit setup\n- **Get a Clipper Card** for transit payment (used on BART and other Bay Area systems) [9].\n- **Airport-to-city (if you’re flying in):** Two major Bay Area airports connect to San Fra",
+      "citations_used": 8,
+      "has_citation": true,
+      "unique_sources_used": 8,
+      "retrieval_count": 15,
+      "retrieval_unique_sources": 14,
+      "refusal_like": false,
+      "citations": [
+        {
+          "n": 1,
+          "source": "sf_corpus/attractions/2026-02-11_sftravel_golden_gate_bridge.pdf",
+          "chunk_index": 6,
+          "text": "idio offers bike rentals and electric bike-share opportunities, plus arecommended bike path through Crissy Field. For more information, visit the . Union SquareMuni Presidio GO Golden Gate Bridge Welcome Center the Presidio Presidio online PLAN YOUR VISIT Attractions Near theﯥ Tips for Photographing the Golden Gate Bridge One of the most photographed landmarks in the world, the Golden Gate Bridge is an Instagram hit whenever it’sposted. Here are a few favorite angles and best time of day to snag a shot that will give your followers serious FOMO: Morning 2/11/26, 9:20 PM Golden Gate Bridge | San Francisco Travel https://www.sftravel.com/things-to-do/attractions/iconic-sf/golden-gate-bridge 3/10 An under the bridge angle from Fort Point is the perfect spot to catch the first rays of sunshine striking the enormousorange superstructure. Afternoon From Baker Beach, get an outside-the-gate vie"
+        },
+        {
+          "n": 2,
+          "source": "sf_corpus/food_nightlife/2026-02-11_sftravel_restaurants.pdf",
+          "chunk_index": 0,
+          "text": "San Francisco's Meeting PlannersTravel TradeMediaMembers ﯘ Welcome to SF Things to Do Eat & Drink Where to StayPlan Your Trip Search | Language |Select Language x 2/11/26, 9:37 PM San Francisco's Iconic Eats In Every Neighborhood | San Francisco Travel https://www.sftravel.com/article/san-franciscos-iconic-eats-every-neighborhood 1/15 Iconic Eats In EveryNeighborhood BY TYLER COHN Did you come to San Francisco just to eat? Don't be embarrassed; this is what San Francisco is famous for! If you're here to treat yourself, you might get overloaded by the options. Not to worry; we've gone ahead and picked out the must-eats in San Francisco at a number of famous and unique places all throughout the city's wonderful, diverse neighborhoods. Fisherman's Wharf One of San Francisco's most visited neighborhoods, Fisherman's Wharf is your best bet for finding three classic San Francisco delicacies: s"
+        },
+        {
+          "n": 3,
+          "source": "sf_corpus/attractions/2026-02-11_sftravel_ferry_building.pdf",
+          "chunk_index": 1,
+          "text": "e Nave, the market's central indoor thoroughfare, and you'll experience one of San Francisco's most vibrant gathering places, while discovering the bounty of Northern California's artisan food and wine producers. History The San Francisco Ferry Building first opened in 1898, when it was the largest project ever undertaken in the city. With its elegant arches and 245-foot clock tower, the enormous Beaux Arts-style building was inspired by classical European architecture. It served as the city's primary transportation hub, welcoming as many as 50,000 commuters a day, who rode in on the ferry in the mornings and reversed the journey in the afternoons. At its peak, it was one of the busiest transit terminals in the world. The construction of the and Bay Bridge in the 1930s, along with the proliferation of the automobile, made the Ferry Building all but obsolete. It was transformed into offic"
+        },
+        {
+          "n": 5,
+          "source": "sf_corpus/attractions/2026-02-11_sftravel_civic_center.pdf",
+          "chunk_index": 5,
+          "text": "co Ballet Guide:What to Know Before YouSee a Performance To help you plan ahead and get the most out of your visit to the San Francisco Ballet, we offer you these tips and essential information. San Francisco Bars andRestaurants Perfect forBefore and After A Show Explore some of the best spots in San Francisco for pre- and post-show dining and drinks. YouAsia Full o multi histo visit a ALW AYS SAN FRANCISCO How Visitors See SF@OnlyinSF Low Rates. Free Cancellation. BOOK YOUR STAY! 2/11/26, 9:29 PM Civic Center / Hayes Valley | San Francisco Travel https://www.sftravel.com/neighborhoods/civic-center-hayes-valley 6/11 Explore MoreSan FranciscoNeighborhoods Explore the map to get a closer look at San Francisco's 19 major neighborhoods. Select Neighborhood Neighborhood LOAD MORE Low Rates. Free Cancellation. BOOK YOUR STAY! 2/11/26, 9:29 PM Civic Center / Hayes Valley | San Francisco Travel"
+        },
+        {
+          "n": 6,
+          "source": "sf_corpus/neighborhoods/2026-02-11_sftravel_chinatown.pdf",
+          "chunk_index": 5,
+          "text": "EXPLORE Low Rates. Free Cancellation. BOOK YOUR STAY! 2/14/26, 10:36 PM Chinatown | San Francisco Travel https://www.sftravel.com/neighborhoods/chinatown 5/12 EXPLORE SF Like a Local Where to Eat in Chinatown Follow our recommendations for the best eats in San Francisco's Chinatown, no matter your budget, style, or preferred flavors. LEARN MORE Low Rates. Free Cancellation. BOOK YOUR STAY! 2/14/26, 10:36 PM Chinatown | San Francisco Travel https://www.sftravel.com/neighborhoods/chinatown 6/12 How I See Chinatown with Linda Lee Stroll through Chinatown's vibrant streets and explore with all of your senses. Get an introduction from local tour guide and San Francisco native Linda Lee. ALW AYS SAN FRANCISCO How Visitors See SF@OnlyInSF Low Rates. Free Cancellation. BOOK YOUR STAY! 2/14/26, 10:36 PM Chinatown | San Francisco Travel https://www.sftravel.com/neighborhoods/chinatown 7/12 Explore"
+        },
+        {
+          "n": 9,
+          "source": "sf_corpus/logistics/2026-02-11_sftravel_airport_to_city.pdf",
+          "chunk_index": 0,
+          "text": "How To Meeting PlannersTravel TradeMediaMembers ﯘ Welcome to SF Things to Do Eat & Drink Where to StayPlan Your Trip Search | Language |Select Language x 2/11/26, 9:58 PM How to Get to San Francisco from the Airports on BART | San Francisco Travel https://www.sftravel.com/info/how-to-get-to-san-francisco-airports-bart 1/8 SPONSORED CONTENT: Two of the Bay Area's major are connected to San Francisco via BART (that stands for Bay Area Rapid Transit). This network of speedy commuter rail services five counties of the Bay Area, with multiple stops in some of San Francisco's most popular . If you want a smooth ride from the airport into the city, follow these steps for doing so on BART. BART airports neighborhoods BART Basics First, some rules of the rails: How to Pay Riders pay for BART with , the Bay Area’s all-in-one transit card that is also accepted on other transit systems in the region"
+        },
+        {
+          "n": 14,
+          "source": "sf_corpus/logistics/2026-02-11_sftravel_transport.pdf",
+          "chunk_index": 0,
+          "text": "Accessible Transportation inSan Francisco Meeting PlannersTravel TradeMediaMembers ﯘ Welcome to SF Things to Do Eat & Drink Where to StayPlan Your Trip Search | Language |Select Language x 2/11/26, 9:53 PM Accessible Transportation in San Francisco | San Francisco Travel https://www.sftravel.com/article/accessible-transportation-san-francisco 1/12 BY AARON DANZIG Learn how to get around San Francisco easily with accessible transportation options. Getting around San Francisco is easier than ever with a safe and reliable public transit system that caters to those with disabilities. Muni, BART, and Caltrain have features like lifts, elevated platforms, reserved seating, and more to keep you moving. In addition, multiple car rental services and rideshare options are available for even easier movement throughout SF. Airport Transportation San Francisco is an accessible destination, starting w"
+        },
+        {
+          "n": 15,
+          "source": "sf_corpus/food_nightlife/2026-02-11_sftravel_bakaries.pdf",
+          "chunk_index": 12,
+          "text": "like Cheeseboard, Arizmendi has delicious baked goods and a pizza of the day. Every day is different and it's 100% vegetarian. Even meat eaters can't say no. What's popular: Pizza of the Day. What you should get: Pizza of the Day. Devil's Teeth Baking Company 3875 Noriega St. Located out in the sleepy neighborhood of Outer Sunset, is worth the trip. Opened by a wife whose husband complained about the lack of good breakfast sandwiches in the neighborhood, DTBC is home to one of the best in the city. This baking outpost was one of the first in the neighborhood's rejuvenation and you can feel Arizmendi Bakery Devil's Teeth 2/11/26, 9:38 PM Best Bakeries in San Francisco by Neighborhood | San Francisco Travel https://www.sftravel.com/article/best-bakeries-san-francisco-neighborhood 7/13 the unique energy here. What's popular: Breakfast sandwich. What you should get: Beignets or the doughnut"
+        }
+      ]
+    },
+    {
+      "id": "airport_to_city",
+      "mode": "hybrid",
+      "question": "How do I get to downtown SF from SFO using transit?",
+      "latency_s": 10.524,
+      "answer_len": 1671,
+      "answer_preview": "### Fastest/easiest: BART (train) from SFO to downtown SF\n- **After you land and pick up luggage**, follow signs for **AirTrain** (free airport tram) [1].  \n- Take **AirTrain Red or Blue line** to **Garage G / BART station** at **International Terminal G** [1].  \n- Go to the BART platform and board ",
+      "citations_used": 5,
+      "has_citation": true,
+      "unique_sources_used": 2,
+      "retrieval_count": 15,
+      "retrieval_unique_sources": 4,
+      "refusal_like": false,
+      "citations": [
+        {
+          "n": 1,
+          "source": "sf_corpus/logistics/2026-02-11_sftravel_how_to_get_around.pdf",
+          "chunk_index": 1,
+          "text": "r own accredited museum or a dedicated ? Once you land at SFO, it's easy to get into the city itself. Here are a few different ways: SFO Wag Brigade BART Bay Area Rapid Transit (BART) all-electric trains are a fast, inexpensive, and dependable way to get from SFO to San Francisco. Once you have your luggage, follow the signs for AirTrain, a free tram service to all terminals. Take either the Red or Blue AirTrain line to the Garage G and BART stop in International Terminal G. Proceed to the platform and board the San Francisco/Antioch train. BART fares are based on distance traveled; the greater the distance, the higher the fare. A round-trip fare from SFO to downtown San Francisco is $22.30 ($11.15 one-way). When you arrive at your destination, you must scan your Clipper Card again to exit the station. If you don’t have enough money on your ticket to exit, don’t worry. You can add more a"
+        },
+        {
+          "n": 3,
+          "source": "sf_corpus/logistics/2026-02-11_sftravel_airport_to_city.pdf",
+          "chunk_index": 4,
+          "text": "ic and is only a half-hour ride from to San Francisco, The BART station at San Francisco International Airport (SFO) is in the International Terminal and accessible via a short walk from Terminals 1 and 3, or via the free AirTrain's red line. Three to four trains depart each hour. To get to downtown San Francisco, board an Antioch-bound train to one of the four downtown San Francisco stations (Civic Center, Powell Street, Montgomery Street, Embarcadero). From these stations, it's a short cab ride or walk to many , , , and major points of interest. For more information on traveling from and returning to SFO, visit BART's . hotels attractionsdining airport connection guide From OAK The BART fare from OAK to downtown San Francisco is only 12.65 ($25.30 round trip). That's still less than a shuttle van, ride share, or taxi. The Oakland Airport Station is a short walk from both terminals. To"
+        },
+        {
+          "n": 6,
+          "source": "sf_corpus/logistics/2026-02-11_sftravel_how_to_get_around.pdf",
+          "chunk_index": 5,
+          "text": "ontact the service provider for pricing and availability. SamTrans Buses The San Mateo County Transit Agency (SamTrans) runs public buses between SFO and downtown San Francisco on the SFO, 292, and 398 lines for $2-$5 one-way for adults. Find SamTrans bus stops in the following locations at each terminal: Parking Lyft Uber This website Terminal 2: Arrivals/Baggage Claim Level, center island adjacent to Courtyard2. Terminal 3: Arrivals/Baggage Claim Level, curbside adjacent to Courtyard 4. International Terminal: Level 1 at Courtyard A and curbside adjacent toCourtyard G. 2/11/26, 9:52 PM Transportation Basics: How to Get Around San Francisco | San Francisco Travel https://www.sftravel.com/info/transportation-basics-how-to-get-around-san-francisco 3/14 San Francisco neighborhoods and popular tourist destinations are often sprinkled with a myriad of parking options, including metered parki"
+        },
+        {
+          "n": 11,
+          "source": "sf_corpus/logistics/2026-02-11_sftravel_airport_to_city.pdf",
+          "chunk_index": 3,
+          "text": "wallet) or a BART paper ticket (only available at SFO) with funds loaded. Proof of payment is required. BART offers a variety of fare discounts . BART Service BART connects San Francisco and Oakland to destinations across the East Bay and along the San Francisco peninsula—even reaching as far south as San Jose! BART is not a 24-hour service. Trains operate from 5 a.m. to midnight on weekdays, from 6 a.m. to midnight on Saturdays, and from 8 a.m. to midnight on Sundays. Service along certain lines may be limited on weekends. Trains run most frequently on weekdays. here From SFO The fare to downtown San Francisco is only $11.15 ($22.30 round trip). That's less than a shuttle van, an Uber or Lyft ride, and a taxi! Taking BART avoids road traffic and is only a half-hour ride from to San Francisco, The BART station at San Francisco International Airport (SFO) is in the International Terminal"
+        },
+        {
+          "n": 12,
+          "source": "sf_corpus/logistics/2026-02-11_sftravel_how_to_get_around.pdf",
+          "chunk_index": 2,
+          "text": "ion, you must scan your Clipper Card again to exit the station. If you don’t have enough money on your ticket to exit, don’t worry. You can add more at the Add Fare machine in the station. Transportation Basics: How toGet Around San Francisco San Francisco is made up of 49 square miles of long boulevards, curvy streets, hidden alleyways and lots of hills. But have no fear! Follow these tips and you’ll be the transportation hero of your San Francisco adventure. 2/11/26, 9:52 PM Transportation Basics: How to Get Around San Francisco | San Francisco Travel https://www.sftravel.com/info/transportation-basics-how-to-get-around-san-francisco 2/14 Ride-Sharing Apps With app-based transportation services, including and , you can arrange to ride with drivers using their personal, non-commercial vehicles via smartphone. These services pick up passengers on Level 5 of the Domestic Garage. describes"
+        }
+      ]
+    },
+    {
+      "id": "areas_to_stay",
+      "mode": "hybrid",
+      "question": "What are good areas to stay for a first-time visitor and why?",
+      "latency_s": 9.318,
+      "answer_len": 2005,
+      "answer_preview": "Good first-time areas to stay (and why), based on the provided context:\n\n- **Union Square (Downtown) — best if you want to shop**\n  - San Francisco Travel explicitly calls out **Union Square** as *“The Best Area to Stay If You Want to Shop”* [4].  \n  - Practical why: it’s a straightforward “base” fo",
+      "citations_used": 5,
+      "has_citation": true,
+      "unique_sources_used": 3,
+      "retrieval_count": 15,
+      "retrieval_unique_sources": 10,
+      "refusal_like": false,
+      "citations": [
+        {
+          "n": 2,
+          "source": "sf_corpus/outdoors/2026-02-11_sftravel_baker_beach.pdf",
+          "chunk_index": 4,
+          "text": "s in your car if you are renting one. What to Bring Unlike Southern California beaches, the sandy stretches of San Francisco don't always guarantee clear skies and sweltering temperatures. That's why, even at our beaches, it's best to dress in layers. You should also visit Baker Beach with a comfortable but sturdy pair of shoes, as there are trails and stairs you can climb to explore the cliffs that shield the beach. Picnicking is allowed on Baker Beach, so feel free to bring a bunch of local goodies from some of our favorite places in the nearby neighborhood.Richmond Nearby Attractions Baker Beach is part of the Presidio, an enormous national park that's full of history, art, and breathtaking scenery. The Presidio is also home to the , which celebrates the life and legacy of one of the most famous animators of all time. You can reach the via the Presidio and walk across its 1.7-mile spa"
+        },
+        {
+          "n": 4,
+          "source": "sf_corpus/lodging/2026-02-11_sftravel_hotels.pdf",
+          "chunk_index": 0,
+          "text": "Meeting PlannersTravel TradeMediaMembers ﯘ Welcome to SF Things to Do Eat & Drink Where to StayPlan Your Trip Search | Language |Select Language x 2/11/26, 9:54 PM The Best Area to Stay in San Francisco | San Francisco Travel https://www.sftravel.com/article/best-area-to-stay-san-francisco 1/19 We always get the question, \"What's the best area to stay in when visiting San Francisco?\" Our answer: everywhere. However, depending on what kind of trip you are making and who is coming along, there may be neighborhoods that align better with your plans. This is our attempt to answer in a unique way that burning question we get all too often. Whether you're a foodie, coming up for an event like Pride, visiting with your family, or for any other reason, you'll find a different one in each part of the city. The Best Area to Stay If You Want to Shop: UnionSquare Are you in the mood for some serious"
+        },
+        {
+          "n": 8,
+          "source": "sf_corpus/lodging/2026-02-11_sftravel_hotels.pdf",
+          "chunk_index": 9,
+          "text": "epare yourself for 24 blocks of Chinese restaurants, food markets, street food vendors and locally owned shops. Nearby hotels include: , and . 999 Orchard Garden Hotel Grant Plaza Hotel Royal Pacific Motor Inn FIND MORE NORTH BEACH OPTIONS FIND MORE LGBTQ-FRIENDLY OPTIONS 2/11/26, 9:54 PM The Best Area to Stay in San Francisco | San Francisco Travel https://www.sftravel.com/article/best-area-to-stay-san-francisco 6/19 Richmond is sometimes referred to as the second Chinatown, as many Chinese- Americans call this area home. Several museums are also nearby in the neighborhood. You can book a short-term rental, ranging from single rooms to entire places, which can be booked on , or .Airbnb VRBO Booking.com The Best Area to Stay If You Are a Health Nut:Embarcadero It's not about having access to a gym, but access to great outdoor spaces that will elevate your heart rate. Hotels along the giv"
+        },
+        {
+          "n": 9,
+          "source": "sf_corpus/neighborhoods/2026-02-11_sftravel_embarcadero.pdf",
+          "chunk_index": 3,
+          "text": "ossel from NOPA Learn why Chef Laurence came to San Francisco all those years ago, why he still loves the city and what he loves about the Ferry Building Farmer's Market. EMBARCADERO / FINANCIAL DISTRICT Trip Inspiration From great bites to museums and attractions, here are some ideas to inspire your visit to San Francisco's Embarcardero / Financial District neighborhood. ALL TRIP IDEAS 🎟 Save up to 46% at 4 Top Attractions – SKIP THE LINES! 2/14/26, 10:40 PM Embarcadero / Financial District | San Francisco Travel https://www.sftravel.com/neighborhoods/embarcadero-financial-district 4/10 Illuminate SF on theEmbarcadero Walk along San Francisco's waterfront for an eye-popping light art excursion. Everything You Need toKnow About San Francisco'sHistoric Tadich Grill Looking for a dining experience that embodies classic San Francisco? Look no further than the Tadich Grill, the oldest restau"
+        },
+        {
+          "n": 12,
+          "source": "sf_corpus/lodging/2026-02-11_sftravel_hotels.pdf",
+          "chunk_index": 13,
+          "text": "sco Travel https://www.sftravel.com/article/best-area-to-stay-san-francisco 8/19 Nearby hotels include , , and . You can book a short-term rental, ranging from single rooms to entire places, which can be booked on , or . Inn at the Opera Hayes Valley Inn BEI Hotel Days Inn Civic Center Airbnb VRBO Booking.com PLENTY OF SHORT-TERMS RENTALS AVAILABLE The Best Area to Stay for Peace, Love andHappiness: Haight-Ashbury Come to where it all started for the hippie movement and see the influence of the 1960s counterculture. Victorian houses are decked out in bright, cheerful colors and you can find vintage shops, thrift stores and other businesses harking back to the . Stay at the historic . Built in 1883, this boutique hotel is one of the oldest hotels on the border of Golden Gate Park. You can book a short-term rental, ranging from single rooms to entire places, which can be booked on , or . 1"
+        }
+      ]
+    },
+    {
+      "id": "muni_line_numbers_sfo_to_union_square",
+      "mode": "hybrid",
+      "question": "Give me the exact Muni/BART line numbers and step-by-step route from SFO to Union Square.",
+      "latency_s": 9.827,
+      "answer_len": 2062,
+      "answer_preview": "I don’t have the **exact BART line “number/color”** for the SFO→downtown train in the provided context (the context only names the destination as **“San Francisco/Antioch”** and says to board an **Antioch-bound train**) [6], [11]. If you tell me **which terminal you land at** (or whether you’re star",
+      "citations_used": 6,
+      "has_citation": true,
+      "unique_sources_used": 4,
+      "retrieval_count": 15,
+      "retrieval_unique_sources": 7,
+      "refusal_like": false,
+      "citations": [
+        {
+          "n": 1,
+          "source": "sf_corpus/logistics/2026-02-11_sftravel_muni.pdf",
+          "chunk_index": 3,
+          "text": "ortation Basics: How to Use Muni | San Francisco Travel https://www.sftravel.com/info/transportation-basics-how-to-use-muni 2/10 Historic Streetcars The runs daily along Market Street and down the Embarcadero from the Castro district to Fisherman's Wharf. If you're a transit buff, hop on the F-line, a historic streetcar, and take a trip back in time. Central Subway The connects the T-line to Chinatown through the SoMa neighborhood and the Union Square shopping district, and is the newest expansion to San Francisco's Muni system. There are four stops along the line: Fourth & Brannan, Yerba Buena/Moscone Station, Union Square/Market Street Station, and Chinatown-Rose Pak Station. The Union Square station is connected to the Powell Street underground station, which makes transfers easy and accessible. Clipper Cards are accepted, which can also be downloaded on the MuniMobile app. Cable Cars"
+        },
+        {
+          "n": 6,
+          "source": "sf_corpus/logistics/2026-02-11_sftravel_how_to_get_around.pdf",
+          "chunk_index": 1,
+          "text": "r own accredited museum or a dedicated ? Once you land at SFO, it's easy to get into the city itself. Here are a few different ways: SFO Wag Brigade BART Bay Area Rapid Transit (BART) all-electric trains are a fast, inexpensive, and dependable way to get from SFO to San Francisco. Once you have your luggage, follow the signs for AirTrain, a free tram service to all terminals. Take either the Red or Blue AirTrain line to the Garage G and BART stop in International Terminal G. Proceed to the platform and board the San Francisco/Antioch train. BART fares are based on distance traveled; the greater the distance, the higher the fare. A round-trip fare from SFO to downtown San Francisco is $22.30 ($11.15 one-way). When you arrive at your destination, you must scan your Clipper Card again to exit the station. If you don’t have enough money on your ticket to exit, don’t worry. You can add more a"
+        },
+        {
+          "n": 7,
+          "source": "sf_corpus/logistics/2026-02-11_sftravel_sfmta.pdf",
+          "chunk_index": 3,
+          "text": "n, and you can load as much money on these passes as you want. You can also download the MuniMobile app, which gives you the ability to purchase and reload tickets in advance while also providing $5 day passes with unlimited bus and train rides. For those spending a longer period of time in SF, consider getting a reloadable Clipper Card to take you from one station to the next as quickly as possible. Clipper Cards can be downloaded on the Clipper Card mobile app, which can be used via Apple Pay. What other public transit is connectedto the Central Subway? The Union Square/Market Street Station is connected via an underground concourse to the Powell Station, which gives you access to BART and the rest of the Muni Metro lines. Not only does the Central Subway make getting around San Francisco easier, but it also gets you closer to a world of and places to . Hop on and enjoy! things to do e"
+        },
+        {
+          "n": 11,
+          "source": "sf_corpus/logistics/2026-02-11_sftravel_airport_to_city.pdf",
+          "chunk_index": 4,
+          "text": "ic and is only a half-hour ride from to San Francisco, The BART station at San Francisco International Airport (SFO) is in the International Terminal and accessible via a short walk from Terminals 1 and 3, or via the free AirTrain's red line. Three to four trains depart each hour. To get to downtown San Francisco, board an Antioch-bound train to one of the four downtown San Francisco stations (Civic Center, Powell Street, Montgomery Street, Embarcadero). From these stations, it's a short cab ride or walk to many , , , and major points of interest. For more information on traveling from and returning to SFO, visit BART's . hotels attractionsdining airport connection guide From OAK The BART fare from OAK to downtown San Francisco is only 12.65 ($25.30 round trip). That's still less than a shuttle van, ride share, or taxi. The Oakland Airport Station is a short walk from both terminals. To"
+        },
+        {
+          "n": 12,
+          "source": "sf_corpus/logistics/2026-02-11_sftravel_airport_to_city.pdf",
+          "chunk_index": 3,
+          "text": "wallet) or a BART paper ticket (only available at SFO) with funds loaded. Proof of payment is required. BART offers a variety of fare discounts . BART Service BART connects San Francisco and Oakland to destinations across the East Bay and along the San Francisco peninsula—even reaching as far south as San Jose! BART is not a 24-hour service. Trains operate from 5 a.m. to midnight on weekdays, from 6 a.m. to midnight on Saturdays, and from 8 a.m. to midnight on Sundays. Service along certain lines may be limited on weekends. Trains run most frequently on weekdays. here From SFO The fare to downtown San Francisco is only $11.15 ($22.30 round trip). That's less than a shuttle van, an Uber or Lyft ride, and a taxi! Taking BART avoids road traffic and is only a half-hour ride from to San Francisco, The BART station at San Francisco International Airport (SFO) is in the International Terminal"
+        },
+        {
+          "n": 15,
+          "source": "sf_corpus/logistics/2026-02-11_sftravel_sfmta.pdf",
+          "chunk_index": 2,
+          "text": "s the door to a world of public transportation possibilities throughout the city. Here’s how to use it. 2/11/26, 10:01 PM Everything You Need to Know About San Francisco's Central Subway | San Francisco Travel https://www.sftravel.com/article/everything-you-need-to-know-about-san-franciscos-central-subway 2/9 Yerba Buena/Moscone Station (Fourh St. and Folsom St.) Union Square/Market St. Station (under Stockton St. between Geary St. andMarket St.) Chinatown-Rose Pak Station (Stockton St. and Washington St.) How do I pay? Each trip on one of these trains costs $2.50. There are multiple payment options for the Central Subway and Muni. For singular day use and short trips, one-time passes are easily accessible at any of the kiosks in the station, and you can load as much money on these passes as you want. You can also download the MuniMobile app, which gives you the ability to purchase and r"
+        }
+      ]
+    },
+    {
+      "id": "ferry_building_hours",
+      "mode": "hybrid",
+      "question": "What time does the Ferry Building open and close today?",
+      "latency_s": 3.081,
+      "answer_len": 520,
+      "answer_preview": "I don’t know from the provided context what time the **Ferry Building Marketplace** opens and closes **today**—the excerpts describe its history, food vendors, and the farmers market hours, but not the building’s daily opening/closing hours [1], [2], [3].\n\nWhat I *can* confirm here: the **Ferry Plaz",
+      "citations_used": 3,
+      "has_citation": true,
+      "unique_sources_used": 2,
+      "retrieval_count": 15,
+      "retrieval_unique_sources": 5,
+      "refusal_like": true,
+      "citations": [
+        {
+          "n": 1,
+          "source": "sf_corpus/attractions/2026-02-11_sftravel_top_attractions.pdf",
+          "chunk_index": 7,
+          "text": "co 7/29 The Ferry Building The , an iconic landmark of the city, holds a rich history and is a must-visit attraction. With stunning bay views, the ferry building is still a starting point for exploring . Initially built in 1898, it was the central transportation hub for ferries crossing the San Francisco Bay. Today, the beautifully restored building also houses a marketplace filled with artisanal food stalls, restaurants, and other shops. The here is renowned, offering visitors critically acclaimed restaurants like the A16 and Hog Island Oyster Company. Its weekly , where some of San Francisco's best chefs do their own shopping, are also a feast for the senses. 666 San Francisco Ferry Building waterfront attractions food scene farmers markets 777 2/11/26, 8:36 PM Top 20 Attractions in San Francisco | San Francisco Travel https://www.sftravel.com/article/top-20-attractions-san-francisco 8"
+        },
+        {
+          "n": 2,
+          "source": "sf_corpus/attractions/2026-02-11_sftravel_ferry_building.pdf",
+          "chunk_index": 2,
+          "text": "e and Bay Bridge in the 1930s, along with the proliferation of the automobile, made the Ferry Building all but obsolete. It was transformed into office space in 1955. In March 20 03, the San Francisco Ferry Building re-opened to the public as the Ferry Building Marketplace, marking the end of an extensive four-year restoration project. Ferry services resumed. The marketplace's mission is to promote regional artisan producers and be a gathering place for the Bay Area's communities. It's also a very popular visitor attraction. culinary scene The Ferry Building Marketplace farmers market Golden Gate Bridge Everything You Need to KnowAbout San Francisco's FerryBuilding BY CAROL HIGH A transit hub, historic landmark, and foodie mecca, San Francisco's Ferry Building should be on every visitor's list. 2/11/26, 9:23 PM Everything You Need to Know About San Francisco's Ferry Building | San Franci"
+        },
+        {
+          "n": 3,
+          "source": "sf_corpus/attractions/2026-02-11_sftravel_ferry_building.pdf",
+          "chunk_index": 4,
+          "text": "a local favorite, as are its hand-spun milk shakes. offers the freshest , raw or in creative preparations, serving them alongside other seafood options and incredible views of San Francisco Bay. A recent addition to the Ferry Building, and featured on Netflix's Chefs Table series, , serves accessible and delicious Cambodian dishes. Try their pork noodle soup and cabbage salad. Farmers Market & Outdoor Vendors The is adjacent to the Ferry Building on Tuesdays and Thursdays from 10 a.m. to 2 p.m. and Saturdays from 8 a.m. to 2 p.m. The market attracts around 40,000 shoppers every week. The crowds come for fresh, local produce and artisan offerings including breads and cheeses. The Thursday market offers street food, and on Saturdays, a number of local restaurants come out to showcase items from their menus. How to Get There The Ferry Building Marketplace is located on the Embarcadero, wher"
+        }
+      ]
+    },
+    {
+      "id": "quiet_stay_easy_transit",
+      "mode": "hybrid",
+      "question": "Where should I stay if I want quiet nights but still easy public transit access, and why?",
+      "latency_s": 6.345,
+      "answer_len": 1377,
+      "answer_preview": "Based on the provided context, the best match for **quiet nights + easy public transit** is the **Sunset District (near Golden Gate Park / Ocean Beach)**.\n\n### Stay: Sunset District (near the N Judah line)\n**Why it fits your priorities**\n- **Easy public transit access:** The context explicitly says ",
+      "citations_used": 3,
+      "has_citation": true,
+      "unique_sources_used": 2,
+      "retrieval_count": 15,
+      "retrieval_unique_sources": 12,
+      "refusal_like": false,
+      "citations": [
+        {
+          "n": 1,
+          "source": "sf_corpus/food_nightlife/2026-02-11_sftravel_nightclubs.pdf",
+          "chunk_index": 6,
+          "text": "is no formal dress code, it is recommended to dress up a bit on busier nights to avoid being turned away at the door. If you’re passionate about techno, EDM, and deep house, Audio is the club for you. Just be ready to stay out all night. 555 VISIT PUBLIC WORKS VISIT AUDIO 2/11/26, 9:40 PM The Best Nightclubs in San Francisco | San Francisco Travel https://www.sftravel.com/article/best-nightclubs-san-francisco 6/17 @frankyderey@frankyderey DNA Lounge 316 11th Street This venue has been hosting unforgettable nights since 1985. DNA lounge is well equipped for a good time, with four spacious dance floors, state-of-the-art sound and lighting systems, and a constantly changing roster of DJs and other performers. On Saturday nights, locals flock to the club’s Bootie Mashup parties (tickets available at the door), where you can hear your favorite pop-hits mixed and mashed together. 666 VISIT DN"
+        },
+        {
+          "n": 3,
+          "source": "sf_corpus/outdoors/2026-02-11_sftravel_sunset_dune.pdf",
+          "chunk_index": 1,
+          "text": "incoln Way, which is parallel to Golden Gate Park, meaning pedestrians and bicyclists can access it directly and seamlessly from the city’s most famous public playground. Sunset Dunes then follows San Francisco’s western coastline all the way to Sloat Boulevard, connecting to the and nearby Lake Merced Park. Ocean Beach San Francisco Zoo San Francisco's Sunset Dunes BY OCEAN MALANDRA This 43-acre park at the edge of the world transforms a busy highway into an amazing new place for play and exploration. 2/11/26, 9:41 PM Your Guide to San Francisco's Sunset Dunes | San Francisco Travel https://www.sftravel.com/article/your-guide-to-san-franciscos-sunset-dunes 2/11 The Sunset District and Sunset Dunes are where San Francisco meets the mighty Pacific Ocean. | Credit:@storyofadrone How do I get to Sunset Dunes? Sunset Dunes is easy to get to via . The N Judah Muni Metro line will take you dir"
+        },
+        {
+          "n": 9,
+          "source": "sf_corpus/food_nightlife/2026-02-11_sftravel_nightclubs.pdf",
+          "chunk_index": 5,
+          "text": "ankyderey@frankyderey live performances, and interactive experiences that celebrate the local culture. Whether you're a music lover, art aficionado, or just want to dance, Public Works Nightclub is the perfect nightclub for experiencing San Francisco's cultural diversity and creativity. After all, their motto is \"giving the people what they want.\" Audio 316 11th Street “Designed by sound fanatics for sound fanatics,” Audio Nightclub is a must-visit for any music lover seeking a truly immersive experience. With two floors and top-of-the-line speakers, Audio proclaims to have the best-sounding surround system in San Francisco. It also has spectacular visuals, featuring a 3D lighting system, LED tunnel, and infinity- mirror vortex. While there is no formal dress code, it is recommended to dress up a bit on busier nights to avoid being turned away at the door. If you’re passionate about tech"
+        }
+      ]
+    }
+  ]
+}

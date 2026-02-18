@@ -147,7 +147,6 @@ env.bak/
 venv.bak/
 
 # Processed data (generated)
-data/processed/
 data/raw/
 
 # OS/editor junk
