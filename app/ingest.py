@@ -11,6 +11,8 @@ from sentence_transformers import SentenceTransformer
 from qdrant_client import QdrantClient
 from qdrant_client.http.models import Distance, VectorParams, PointStruct
 
+from dotenv import load_dotenv
+
 import re
 
 # Remove:
@@ -31,6 +33,8 @@ def clean_pdf_text(text: str) -> str:
     text = re.sub(r"\s+", " ", text).strip()
     return text
 
+
+load_dotenv()
 
 # Config
 RAW_DIR = Path("data/raw/sf")
@@ -233,6 +237,8 @@ def main() -> None:
     vector_size = model.get_sentence_embedding_dimension()
 
     # Step 4: Ensure Qdrant collection exists
+    print("INGEST QDRANT_URL =", QDRANT_URL)
+    print("INGEST HAS_QDRANT_API_KEY =", bool(QDRANT_API_KEY))
     client = QdrantClient(url=QDRANT_URL, api_key=QDRANT_API_KEY)
     ensure_collection(client, vector_size)
 

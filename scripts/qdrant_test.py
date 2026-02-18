@@ -7,6 +7,9 @@ load_dotenv()
 url = os.getenv("QDRANT_URL")
 api_key = os.getenv("QDRANT_API_KEY")
 
+print("QDRANT_URL =", url)
+print("HAS_QDRANT_API_KEY =", bool(api_key))
+
 if not url:
     raise RuntimeError("QDRANT_URL missing from .env")
 if not api_key:
