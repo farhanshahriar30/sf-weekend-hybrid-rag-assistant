@@ -2,8 +2,6 @@
 
 A Streamlit app that answers **San Francisco weekend planning** questions using **Retrieval-Augmented Generation (RAG)** grounded in a PDF corpus. It retrieves evidence from the corpus (keyword + semantic search), then generates an answer **with citations** pointing to the exact chunks used.
 
-**Live demo:** *(paste your Streamlit Community Cloud link here)*
-
 ---
 
 ## ✅ What this app does
