@@ -1,1 +1,2 @@
-# sf-weekend-hybrid-rag-assistant
+#SF Weekend Hybrid RAG Assistant (BM25 + Vector + Hybrid)
+
