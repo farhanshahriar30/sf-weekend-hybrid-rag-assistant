@@ -9,12 +9,19 @@ User flow:
 3) See a grounded answer + citations + optional debug retrieval info
 """
 
+import sys
+from pathlib import Path
+
+
 import streamlit as st
 
 from app.retrieval import build_retrievers
 from app.rag import stream_answer
 
-from pathlib import Path
+# Ensure repo root is on PYTHONPATH (Streamlit Cloud friendly)
+ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
 
 # Streamlit best practice: set config before any other st.* calls
 st.set_page_config(
