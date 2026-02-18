@@ -12,7 +12,7 @@ User flow:
 import streamlit as st
 
 from app.retrieval import build_retrievers
-from app.rag import answer_question, stream_answer
+from app.rag import stream_answer
 
 from pathlib import Path
 
@@ -50,8 +50,6 @@ def main():
     if "history" not in st.session_state:
         st.session_state.history = []  # [{"role": "user"|"assistant", "content": str}, ...]
 
-    if "last_citations" not in st.session_state:
-        st.session_state.last_citations = []
     if "last_retrieval" not in st.session_state:
         st.session_state.last_retrieval = []
 
@@ -81,6 +79,14 @@ def main():
         for m in st.session_state.history:
             with st.chat_message(m["role"]):
                 st.markdown(m["content"])
+
+                # If this is an assistant message and it has citations saved, show them
+                if m["role"] == "assistant" and m.get("citations"):
+                    st.markdown("#### Citations")
+                    for c in m["citations"]:
+                        title = f"[{c['n']}] {c['source']} (chunk {c['chunk_index']})"
+                        with st.expander(title):
+                            st.write(c.get("text", ""))
 
         if question and question.strip():
             # show the user's message
@@ -113,13 +119,19 @@ def main():
                         elif evt.get("type") == "final":
                             final_out = evt
                             answer_box.markdown(final_out.get("answer", running))
-                            st.session_state.last_citations = final_out.get(
-                                "citations", []
-                            )
                             st.session_state.last_retrieval = final_out.get(
                                 "retrieval", []
                             )
                             break
+
+                if final_out and final_out.get("citations"):
+                    st.markdown("#### Citations")
+                    for c in final_out["citations"]:
+                        title = f"[{c['n']}] {c['source']} (chunk {c['chunk_index']})"
+                        with st.expander(title):
+                            st.write(c.get("text", ""))
+                else:
+                    st.caption("No citations were used in the final answer.")
 
             # only after assistant finishes: update history
             st.session_state.history.append(
@@ -129,21 +141,12 @@ def main():
                 {
                     "role": "assistant",
                     "content": (final_out or {}).get("answer", running),
+                    "citations": (final_out or {}).get("citations", []),
+                    "retrieval": (final_out or {}).get("retrieval", []),
                 }
             )
 
     with right:
-        # Citations
-        st.subheader("Citations")
-        citations = st.session_state.last_citations
-        if not citations:
-            st.info("No citations were used in the final answer.")
-        else:
-            for c in citations:
-                title = f"[{c['n']}] {c['source']} (chunk {c['chunk_index']})"
-                with st.expander(title):
-                    st.write(c.get("text", ""))
-
         # Debug panel
         if show_debug:
             st.subheader("Debug: Retrieval Results")

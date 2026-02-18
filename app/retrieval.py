@@ -14,6 +14,7 @@ Why hybrid?
 - RRF combines them robustly without worrying about score scales
 """
 
+import os
 import json
 import re
 from dataclasses import dataclass
@@ -28,7 +29,8 @@ from qdrant_client import QdrantClient
 # Config (match ingest.py)
 CHUNKS_PATH = Path("data/processed/chunks.jsonl")
 
-QDRANT_URL = "http://localhost:6333"
+QDRANT_URL = os.getenv("QDRANT_URL", "http://localhost:6333")
+QDRANT_API_KEY = os.getenv("QDRANT_API_KEY")
 COLLECTION = "sf_weekend_chunks"
 
 # Must match the embedding model used during ingestion so query vectors live in same space
@@ -160,7 +162,7 @@ def get_qdrant_client(url: str = QDRANT_URL) -> QdrantClient:
     """
     Create a Qdrant client for querying.
     """
-    return QdrantClient(url=url)
+    return QdrantClient(url=url, api_key=QDRANT_API_KEY)
 
 
 def get_embedder(model_name: str = EMBED_MODEL_NAME) -> SentenceTransformer:

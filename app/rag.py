@@ -20,6 +20,19 @@ from app.prompts import build_messages
 from app.utils import clean_snippet, filter_citations_used
 
 
+def _messages_to_responses_input(messages: list[dict]) -> list[dict]:
+    """Convert {'role':..,'content':..} messages into Responses API input format."""
+    out = []
+    for m in messages:
+        out.append(
+            {
+                "role": m["role"],
+                "content": [{"type": "input_text", "text": m["content"]}],
+            }
+        )
+    return out
+
+
 # PHASE A: Turn retrieved chunks into a "context pack"
 def format_context(
     results: List[RetrievalResult],
@@ -130,7 +143,7 @@ def stream_answer(
 
     # 3) OpenAI client + messages
     client, model = get_openai_client()
-    # messages = build_messages(question, context, history=history)
+    messages = build_messages(question, context, history=history)
     # Build ONE prompt string (your SDK's responses.stream expects input=str)
     system_rules = (
         "You are a San Francisco weekend planning assistant for first-timers.\n"
@@ -166,6 +179,7 @@ def stream_answer(
     with client.responses.stream(
         model=model,
         input=prompt,
+        # input=_messages_to_responses_input(messages),
         temperature=0.3,
     ) as stream:
         for event in stream:
@@ -260,7 +274,7 @@ def answer_question(
     # D5) Call the model and extract the answer text
     resp = client.responses.create(
         model=model,
-        input=messages,
+        input=_messages_to_responses_input(messages),
         temperature=0.3,  # lower temp = more grounded + consistent
     )
 

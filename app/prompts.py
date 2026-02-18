@@ -52,3 +52,5 @@ def build_messages(
             and (m.get("content") or "").strip()
         ]
         messages.extend(cleaned)
+    messages.append({"role": "user", "content": user})
+    return messages

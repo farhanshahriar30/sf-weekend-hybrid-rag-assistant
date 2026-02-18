@@ -32,14 +32,15 @@ def clean_pdf_text(text: str) -> str:
     return text
 
 
-# ---- Config (keep simple for v1) ----
+# Config
 RAW_DIR = Path("data/raw/sf")
 # Where we write processed artifacts (chunk store, later maybe BM25 artifacts, etc.)
 OUT_DIR = Path("data/processed")
 # A local, human-inspectable "chunk database" (JSON Lines: one JSON object per line)
 CHUNKS_PATH = OUT_DIR / "chunks.jsonl"
 # Qdrant connection details
-QDRANT_URL = "http://localhost:6333"
+QDRANT_URL = os.getenv("QDRANT_URL", "http://localhost:6333")
+QDRANT_API_KEY = os.getenv("QDRANT_API_KEY")
 COLLECTION = "sf_weekend_chunks"
 # Embedding model: converts chunk text -> numeric vector for semantic search
 EMBED_MODEL_NAME = "sentence-transformers/all-MiniLM-L6-v2"
@@ -232,7 +233,7 @@ def main() -> None:
     vector_size = model.get_sentence_embedding_dimension()
 
     # Step 4: Ensure Qdrant collection exists
-    client = QdrantClient(url=QDRANT_URL)
+    client = QdrantClient(url=QDRANT_URL, api_key=QDRANT_API_KEY)
     ensure_collection(client, vector_size)
 
     # Get all chunk texts in order
